@@ -5,183 +5,372 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ALPHA X</title>
 
-  <!-- 字体 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
 
   <style>
-    *{ box-sizing:border-box; }
+    :root{
+      --bg:#050513;
+      --cyan: rgba(120,220,255,.95);
+      --violet: rgba(180,110,255,.95);
+    }
 
-    html,body{
-      height:100%;
-      margin:0;
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; margin:0; }
+    body{
       font-family:"Noto Sans TC","PingFang HK",system-ui,-apple-system,Segoe UI,Roboto,Arial;
-      background:#050513;
+      background:var(--bg);
       color:#fff;
       overflow:hidden;
     }
 
-    /* ===== 背景图（清晰，确保显示） ===== */
+    /* ✅ 关键：不用负 z-index，背景永远可见 */
     .bg{
-      position:fixed;
-      inset:0;
+      position:fixed; inset:0;
       background:url("./bg.jpg") center/cover no-repeat;
-      z-index:-3;
-      transform:scale(1.1);
-      animation:bgMove 16s ease-in-out infinite alternate;
+      z-index:0;
+      transform: scale(1.10);
+      will-change: transform, filter;
+      animation: driftZoom 16s ease-in-out infinite alternate;
+    }
+    @keyframes driftZoom{
+      from{ transform: scale(1.08) translate3d(0,0,0); }
+      to{ transform: scale(1.14) translate3d(0,-1.6%,0); }
     }
 
-    @keyframes bgMove{
-      from{ transform:scale(1.08) translateY(0); }
-      to{ transform:scale(1.14) translateY(-2%); }
-    }
-
-    /* ===== 轻遮罩（不遮图） ===== */
+    /* 轻遮罩：更清晰，不发黑 */
     .overlay{
-      position:fixed;
-      inset:0;
-      z-index:-2;
-      pointer-events:none;
+      position:fixed; inset:0;
+      z-index:1; pointer-events:none;
       background:
-        linear-gradient(
-          180deg,
-          rgba(0,0,0,.25),
-          rgba(0,0,0,.55)
-        );
+        radial-gradient(70% 55% at 50% 28%, rgba(120,180,255,.10), rgba(0,0,0,.38)),
+        radial-gradient(80% 90% at 50% 85%, rgba(180,110,255,.06), rgba(0,0,0,.48)),
+        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.42));
     }
 
-    /* ===== 页面结构 ===== */
+    /* 星尘点缀 */
+    .stars{
+      position:fixed; inset:0;
+      z-index:2; pointer-events:none;
+      background-image:
+        radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,.35), transparent),
+        radial-gradient(1px 1px at 70% 35%, rgba(255,255,255,.25), transparent),
+        radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,.2), transparent);
+      opacity:.5;
+      animation: starsMove 18s linear infinite;
+    }
+    @keyframes starsMove{
+      from{ transform:translateY(0); }
+      to{ transform:translateY(-80px); }
+    }
+
+    /* UI：标题上、按钮下 */
     .stage{
       position:relative;
-      z-index:1;
+      z-index:3;
       height:100%;
       display:flex;
       flex-direction:column;
       justify-content:space-between;
-      padding:32px 20px;
+      padding: clamp(18px, 3vw, 36px);
       text-align:center;
     }
 
-    /* ===== 标题（在上） ===== */
-    .top{
-      margin-top:12px;
-    }
-
+    .top{ margin-top:10px; }
     .title{
-      font-size:clamp(30px,5vw,60px);
-      font-weight:900;
+      font-size: clamp(30px, 4.8vw, 60px);
+      font-weight: 900;
       letter-spacing:.05em;
-      margin-bottom:10px;
-      background:linear-gradient(90deg,#ffffff,#cbbdff,#78dcff);
+      margin:6px 0 10px;
+      background: linear-gradient(90deg, #fff, #cbbdff, #78dcff);
       -webkit-background-clip:text;
       background-clip:text;
       color:transparent;
-      text-shadow:0 10px 40px rgba(0,0,0,.7);
+      text-shadow: 0 12px 60px rgba(0,0,0,.65);
     }
-
     .subtitle{
-      font-size:clamp(14px,2.5vw,18px);
+      font-size: clamp(14px, 2.2vw, 18px);
+      letter-spacing:.18em;
       opacity:.9;
-      letter-spacing:.2em;
+      margin:0;
+      text-shadow: 0 12px 50px rgba(0,0,0,.55);
     }
 
-    /* ===== 中间留空 ===== */
-    .spacer{
-      flex:1;
+    .spacer{ flex:1; min-height:120px; }
+
+    .bottom{ padding-bottom:18px; display:flex; justify-content:center; }
+    .ctaWrap{
+      padding:14px 16px;
+      border-radius:26px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border: 1px solid rgba(180,220,255,.18);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 120px rgba(0,0,0,.55);
     }
 
-    /* ===== 入口按钮（在下） ===== */
-    .bottom{
-      padding-bottom:24px;
-    }
-
-    .cta{
-      display:inline-block;
-      padding:18px 48px;
-      border-radius:999px;
-      font-family:"Orbitron","Noto Sans TC";
-      font-size:clamp(16px,2.6vw,22px);
-      font-weight:800;
-      letter-spacing:.25em;
+    .btn{
+      appearance:none;
+      border:1px solid rgba(160,220,255,.55);
+      background: linear-gradient(135deg, rgba(120,220,255,.35), rgba(180,110,255,.28));
       color:#fff;
-      background:linear-gradient(135deg,#78dcff,#b46eff);
-      border:none;
+      padding:16px 46px;
+      border-radius:999px;
       cursor:pointer;
+      font-family:"Orbitron","Noto Sans TC",system-ui;
+      font-weight:800;
+      font-size: clamp(16px, 2.4vw, 22px);
+      letter-spacing:.22em;
+      position:relative;
+      overflow:hidden;
       box-shadow:
-        0 0 0 1px rgba(255,255,255,.25) inset,
-        0 20px 60px rgba(120,200,255,.45),
-        0 40px 120px rgba(180,120,255,.35);
-      transition:.18s ease;
+        0 0 0 1px rgba(0,255,255,.12) inset,
+        0 18px 60px rgba(120,180,255,.35),
+        0 30px 120px rgba(180,110,255,.25);
+      transition: transform .16s ease, box-shadow .2s ease, filter .2s ease;
     }
+    .btn::before{
+      content:"";
+      position:absolute; inset:-4px;
+      border-radius:999px;
+      background: conic-gradient(from 180deg,
+        rgba(0,255,255,0),
+        rgba(120,220,255,.75),
+        rgba(180,110,255,.85),
+        rgba(0,255,255,0)
+      );
+      filter: blur(14px);
+      z-index:-1;
+      opacity:.95;
+      animation: spin 3.2s linear infinite;
+    }
+    @keyframes spin{ to{ transform:rotate(360deg); } }
 
-    .cta:hover{
-      transform:translateY(-3px) scale(1.04);
+    .btn:hover{
+      transform: translateY(-2px) scale(1.03);
+      filter: saturate(1.12);
       box-shadow:
-        0 0 0 1px rgba(255,255,255,.35) inset,
-        0 30px 90px rgba(120,220,255,.6),
-        0 60px 160px rgba(200,140,255,.45);
+        0 0 0 1px rgba(0,255,255,.18) inset,
+        0 26px 90px rgba(120,200,255,.55),
+        0 40px 160px rgba(200,140,255,.42);
     }
-
     .hint{
       margin-top:10px;
       font-size:12px;
-      opacity:.75;
-      letter-spacing:.15em;
+      letter-spacing:.14em;
+      opacity:.7;
+    }
+    @media (max-width:520px){
+      .btn{ width:100%; padding:16px 18px; }
+      .spacer{ min-height:90px; }
     }
 
-    @media(max-width:520px){
-      .cta{ width:100%; padding:18px 20px; }
+    /* ===== 震撼转场：传送门 ===== */
+    .portal{
+      position:fixed; inset:0;
+      z-index:999;
+      pointer-events:none;
+      opacity:0;
+      transition: opacity .25s ease;
+    }
+    .portal.on{ opacity:1; }
+
+    .ring{
+      position:absolute;
+      left:50%; top:55%;
+      width: 18vmax;
+      height: 18vmax;
+      transform: translate(-50%,-50%) scale(.6);
+      border-radius:999px;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.0) 0 40%, rgba(255,255,255,.0) 41% 100%),
+        conic-gradient(from 180deg, rgba(120,220,255,.0), rgba(120,220,255,.9), rgba(180,110,255,.9), rgba(120,220,255,.0));
+      filter: blur(0px);
+      box-shadow:
+        0 0 40px rgba(120,220,255,.55),
+        0 0 120px rgba(180,110,255,.35);
+      animation: ringSpin .9s linear infinite;
+    }
+    @keyframes ringSpin{ to{ transform:translate(-50%,-50%) scale(1.35) rotate(360deg); } }
+
+    .flash{
+      position:absolute; inset:0;
+      background: radial-gradient(55% 45% at 50% 55%, rgba(255,255,255,.85), rgba(255,255,255,0) 60%);
+      opacity:.0;
+      animation: flash 900ms ease-out forwards;
+    }
+    @keyframes flash{
+      0%{ opacity:0; }
+      35%{ opacity:.85; }
+      100%{ opacity:0; }
+    }
+
+    .zoomBlur{
+      position:fixed; inset:0;
+      z-index:998; pointer-events:none;
+      opacity:0;
+      transition: opacity .2s ease;
+      backdrop-filter: blur(0px);
+    }
+    .zoomBlur.on{
+      opacity:1;
+      backdrop-filter: blur(10px);
     }
   </style>
 </head>
 
 <body>
-
-  <!-- 背景层（一定要有） -->
-  <div class="bg"></div>
+  <div class="bg" id="bg"></div>
   <div class="overlay"></div>
+  <div class="stars"></div>
 
-  <!-- 主内容 -->
-  <div class="stage">
-
-    <!-- 标题 -->
+  <div class="stage" id="stage">
     <header class="top">
       <div class="title">你嘅旅程，由呢一刻開始</div>
-      <div class="subtitle">一步踏入 ALPHA X 宇宙。</div>
+      <p class="subtitle">一步踏入 ALPHA X 宇宙。</p>
     </header>
 
     <div class="spacer"></div>
 
-    <!-- 入口 -->
     <footer class="bottom">
-      <button class="cta" id="enter">進入&nbsp;ALPHA&nbsp;X</button>
-      <div class="hint">點擊進入</div>
+      <div class="ctaWrap">
+        <button class="btn" id="enterBtn">進入&nbsp;ALPHA&nbsp;X</button>
+        <div class="hint">點擊進入</div>
+      </div>
     </footer>
+  </div>
 
+  <!-- 转场层 -->
+  <div class="zoomBlur" id="zoomBlur"></div>
+  <div class="portal" id="portal">
+    <div class="ring"></div>
+    <div class="flash"></div>
   </div>
 
   <script>
-    // 点击音效 + 跳转
-    document.getElementById("enter").addEventListener("click",()=>{
-      try{
-        const ctx=new (window.AudioContext||window.webkitAudioContext)();
-        const o=ctx.createOscillator();
-        const g=ctx.createGain();
-        o.type="sine";
-        o.frequency.setValueAtTime(200,ctx.currentTime);
-        o.frequency.exponentialRampToValueAtTime(40,ctx.currentTime+0.3);
-        g.gain.setValueAtTime(0.12,ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.35);
-        o.connect(g).connect(ctx.destination);
-        o.start();
-        o.stop(ctx.currentTime+0.4);
-      }catch(e){}
+    /* ===== 视差：像 GIF 的动感推进 ===== */
+    const bg = document.getElementById('bg');
+    let tx=0, ty=0, cx=0, cy=0;
+
+    function setTarget(x,y){
+      tx = (x - 0.5) * 12;
+      ty = (y - 0.5) * 10;
+    }
+    window.addEventListener('mousemove', (e)=>{
+      setTarget(e.clientX / innerWidth, e.clientY / innerHeight);
+    });
+    window.addEventListener('deviceorientation', (e)=>{
+      if(e.gamma==null) return;
+      setTarget((e.gamma+45)/90, (e.beta+45)/90);
+    }, { passive:true });
+
+    (function raf(){
+      cx += (tx - cx) * 0.06;
+      cy += (ty - cy) * 0.06;
+      bg.style.transform = `scale(1.12) translate3d(${cx}px, ${cy}px, 0)`;
+      requestAnimationFrame(raf);
+    })();
+
+    /* ===== WebAudio：点击后启动氛围音 + 音效 ===== */
+    let audioCtx = null;
+    let ambience = null;
+
+    function ensureAudio(){
+      if(audioCtx) return;
+      audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+
+      // 背景氛围：低频 pad（点击后才允许播放）
+      const osc1 = audioCtx.createOscillator();
+      const osc2 = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const lpf  = audioCtx.createBiquadFilter();
+
+      osc1.type = "sine";
+      osc2.type = "triangle";
+      osc1.frequency.value = 55;   // A1
+      osc2.frequency.value = 82.4; // E2
+      lpf.type = "lowpass";
+      lpf.frequency.value = 520;
+
+      gain.gain.value = 0.0;
+
+      osc1.connect(lpf);
+      osc2.connect(lpf);
+      lpf.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc1.start();
+      osc2.start();
+
+      // 淡入
+      gain.gain.linearRampToValueAtTime(0.06, audioCtx.currentTime + 1.2);
+
+      ambience = {osc1, osc2, gain, lpf};
+    }
+
+    function sfxClick(){
+      if(!audioCtx) return;
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = "square";
+      o.frequency.setValueAtTime(420, audioCtx.currentTime);
+      o.frequency.exponentialRampToValueAtTime(180, audioCtx.currentTime + 0.08);
+      g.gain.setValueAtTime(0.10, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+      o.connect(g).connect(audioCtx.destination);
+      o.start();
+      o.stop(audioCtx.currentTime + 0.14);
+    }
+
+    function sfxWhoosh(){
+      if(!audioCtx) return;
+      const noise = audioCtx.createBufferSource();
+      const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.35, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for(let i=0;i<data.length;i++) data[i] = (Math.random()*2-1) * (1 - i/data.length);
+
+      noise.buffer = buffer;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.value = 420;
+      filter.Q.value = 0.8;
+
+      const g = audioCtx.createGain();
+      g.gain.value = 0.0;
+      g.gain.linearRampToValueAtTime(0.16, audioCtx.currentTime + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+
+      noise.connect(filter);
+      filter.connect(g);
+      g.connect(audioCtx.destination);
+
+      noise.start();
+      noise.stop(audioCtx.currentTime + 0.36);
+    }
+
+    /* ===== 点击：震撼转场 + 跳转 ===== */
+    const btn = document.getElementById("enterBtn");
+    const portal = document.getElementById("portal");
+    const zoomBlur = document.getElementById("zoomBlur");
+
+    btn.addEventListener("click", ()=>{
+      ensureAudio();
+      sfxClick();
+
+      // 视觉：传送门开启
+      portal.classList.add("on");
+      zoomBlur.classList.add("on");
+      document.getElementById("stage").style.filter = "blur(2px)";
+
+      // whoosh
+      setTimeout(()=>sfxWhoosh(), 120);
+
+      // 最后跳转
       setTimeout(()=>{
-        location.href="https://alphaxhk.win";
-      },380);
+        window.location.href = "https://alphaxhk.win";
+      }, 950);
     });
   </script>
-
 </body>
 </html>

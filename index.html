@@ -146,6 +146,33 @@ h1{
   letter-spacing:.22em;
   text-align:center;
 }
+  /* ======================
+   点击爆裂（新增，不影响原样式）
+====================== */
+#burst{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:20;
+  opacity:0;
+}
+#burst.active{opacity:1}
+
+#burst .p{
+  position:absolute;
+  border-radius:999px;
+  background:rgba(255,255,255,.95);
+  box-shadow:0 0 18px rgba(160,210,255,.75);
+  transform:translate3d(var(--x0),var(--y0),0);
+  animation:burstMove 900ms ease-out forwards;
+}
+
+@keyframes burstMove{
+  to{
+    transform:translate3d(var(--x1),var(--y1),0) scale(.25);
+    opacity:0;
+  }
+}
 </style>
 </head>
 

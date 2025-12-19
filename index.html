@@ -171,75 +171,145 @@ h1{
 </div>
 
 <script>
-/* ======================
-   星空光粒（完全维持原版，只加闪烁）
-====================== */
-const c = document.getElementById('fx');
-const ctx = c.getContext('2d');
+    /* =========================
+       A) 持续动态光粒（Canvas）
+       ========================= */
+    const c = document.getElementById('fx');
+    const ctx = c.getContext('2d', { alpha: true });
 
-let W, H, DPR;
+    let W = 0, H = 0, DPR = 1;
+    function resize(){
+      DPR = Math.min(2, window.devicePixelRatio || 1);
+      W = Math.floor(window.innerWidth);
+      H = Math.floor(window.innerHeight);
+      c.width  = Math.floor(W * DPR);
+      c.height = Math.floor(H * DPR);
+      c.style.width = W + 'px';
+      c.style.height = H + 'px';
+      ctx.setTransform(DPR,0,0,DPR,0,0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
 
-function resize(){
-  DPR = Math.min(2, window.devicePixelRatio || 1);
-  W = window.innerWidth;
-  H = window.innerHeight;
-  c.width  = W * DPR;
-  c.height = H * DPR;
-  c.style.width = W + 'px';
-  c.style.height = H + 'px';
-  ctx.setTransform(DPR,0,0,DPR,0,0);
-}
-window.addEventListener('resize', resize);
-resize();
+    const isMobile = matchMedia('(max-width: 768px)').matches;
+    const N = isMobile ? 80 : 140;
 
-/* ⛔ 数量、尺寸、速度：全部维持原来 */
-const COUNT = matchMedia('(max-width:768px)').matches ? 140 : 220;
-
-const stars = [...Array(COUNT)].map(()=>({
-  x: Math.random()*W,
-  y: Math.random()*H,
-  r: Math.random()*0.9 + 0.4,     // ✅ 原尺寸
-  vx:(Math.random()-0.5)*0.15,    // ✅ 原速度
-  vy:(Math.random()-0.5)*0.15,
-  a: Math.random()*0.6 + 0.2,     // ✅ 原亮度范围
-  phase: Math.random()*Math.PI*2,// ⭐ 新增：闪烁相位
-  tw: Math.random()*0.015 + 0.01  // ⭐ 新增：闪烁速度（明显）
-}));
-
-function draw(){
-  ctx.clearRect(0,0,W,H);
-  ctx.globalCompositeOperation = 'lighter';
-
-  for(const s of stars){
-    s.x += s.vx;
-    s.y += s.vy;
-
-    if(s.x<0||s.x>W||s.y<0||s.y>H){
-      s.x = Math.random()*W;
-      s.y = Math.random()*H;
+    const particles = Array.from({length:N}, ()=>makeP(true));
+    function makeP(initial=false){
+      const p = {
+        x: Math.random()*W,
+        y: Math.random()*H,
+        r: 0.6 + Math.random()*1.8,
+        vx: (-0.12 + Math.random()*0.24),
+        vy: (-0.10 + Math.random()*0.20),
+        a: 0.25 + Math.random()*0.55,
+        tw: 0.004 + Math.random()*0.012,
+        hue: Math.random() < 0.55 ? 'cyan' : 'violet'
+      };
+      if(!initial){
+        // 从边缘刷入更自然
+        const side = Math.floor(Math.random()*4);
+        if(side===0){ p.x=-10; p.y=Math.random()*H; }
+        if(side===1){ p.x=W+10; p.y=Math.random()*H; }
+        if(side===2){ p.x=Math.random()*W; p.y=-10; }
+        if(side===3){ p.x=Math.random()*W; p.y=H+10; }
+      }
+      return p;
     }
 
-    /* ⭐ 唯一的变化：亮度闪烁（不影响尺寸/颜色） */
-    s.phase += s.tw;
-    const flicker = (Math.sin(s.phase) + 1) * 0.5; // 0~1
-    const alpha = s.a * (0.55 + flicker * 0.9);
+    function draw(){
+      ctx.clearRect(0,0,W,H);
 
-    /* 外光（完全原样） */
-    ctx.beginPath();
-    ctx.fillStyle = `rgba(200,220,255,${alpha*0.35})`;
-    ctx.arc(s.x, s.y, s.r*2.4, 0, Math.PI*2);
-    ctx.fill();
+      // 柔光叠加：更“霓虹”
+      ctx.globalCompositeOperation = 'lighter';
 
-    /* 核心星点（完全原样） */
-    ctx.beginPath();
-    ctx.fillStyle = `rgba(200,220,255,${alpha})`;
-    ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-    ctx.fill();
-  }
+      for(let i=0;i<particles.length;i++){
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.a += (Math.random()-0.5)*p.tw;
 
-  requestAnimationFrame(draw);
-}
-draw();
-</script>
+        // 轻微闪烁
+        const alpha = Math.max(0.08, Math.min(0.85, p.a));
+        const glow = p.hue==='cyan' ? 'rgba(120,220,255,' : 'rgba(180,110,255,';
+        const core = 'rgba(255,255,255,';
+
+        // 绘制：外光 + 核心
+        ctx.beginPath();
+        ctx.fillStyle = glow + (alpha*0.35) + ')';
+        ctx.arc(p.x, p.y, p.r*4.2, 0, Math.PI*2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.fillStyle = glow + (alpha*0.55) + ')';
+        ctx.arc(p.x, p.y, p.r*2.3, 0, Math.PI*2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.fillStyle = core + (alpha*0.75) + ')';
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fill();
+
+        // 出界重生
+        if(p.x < -60 || p.x > W+60 || p.y < -60 || p.y > H+60){
+          particles[i] = makeP(false);
+        }
+      }
+
+      ctx.globalCompositeOperation = 'source-over';
+      requestAnimationFrame(draw);
+    }
+    draw();
+
+    /* =========================
+       B) 点击爆裂 + 解体 + 跳转
+       ========================= */
+    const btn = document.getElementById('enterBtn');
+    const burst = document.getElementById('burst');
+
+    function spawnBurst(x, y, count = 100){
+      burst.classList.add('active');
+      burst.innerHTML = "";
+
+      for(let i=0;i<count;i++){
+        const p = document.createElement('div');
+        p.className = 'p';
+        const angle = Math.random() * Math.PI * 2;
+        const radius = 140 + Math.random() * 420;
+        const x1 = x + Math.cos(angle) * radius;
+        const y1 = y + Math.sin(angle) * radius;
+
+        p.style.left = x + "px";
+        p.style.top  = y + "px";
+        p.style.setProperty('--x0','0px');
+        p.style.setProperty('--y0','0px');
+        p.style.setProperty('--x1',(x1-x)+'px');
+        p.style.setProperty('--y1',(y1-y)+'px');
+
+        const s = 3 + Math.random() * 7;
+        p.style.width = s + "px";
+        p.style.height = s + "px";
+        burst.appendChild(p);
+      }
+
+      setTimeout(()=>{
+        burst.classList.remove('active');
+        burst.innerHTML = "";
+      }, 1000);
+    }
+
+    btn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const rect = btn.getBoundingClientRect();
+      const x = rect.left + rect.width/2;
+      const y = rect.top + rect.height/2;
+
+      spawnBurst(x, y, window.innerWidth < 768 ? 80 : 130);
+      document.body.classList.add('disintegrate');
+
+      const href = btn.getAttribute('href');
+      setTimeout(()=>{ window.location.href = href; }, 1100);
+    }, {passive:false});
+  </script>
 </body>
 </html>

@@ -12,19 +12,14 @@
 <style>
 *{box-sizing:border-box}
 html,body{
-  margin:0;
-  width:100%;
-  height:100%;
+  margin:0;width:100%;height:100%;
   font-family:"Noto Sans TC",-apple-system;
-  background:#000;
-  overflow:hidden;
-  color:#fff;
+  background:#000;overflow:hidden;color:#fff;
 }
 
 /* ===== 背景 ===== */
 .bg{
-  position:fixed;
-  inset:0;
+  position:fixed;inset:0;
   background:url("./bg-desktop-1920x1080.jpg") center/cover no-repeat;
   animation:bgFloat 18s ease-in-out infinite alternate;
   z-index:-3;
@@ -32,81 +27,65 @@ html,body{
 @media (max-width:768px){
   .bg{background:url("./bg-mobile.png") center/cover no-repeat;}
 }
-
 .vignette{
-  position:fixed;
-  inset:0;
-  background:radial-gradient(ellipse at center, rgba(0,0,0,.15), rgba(0,0,0,.75));
+  position:fixed;inset:0;
+  background:radial-gradient(ellipse at center, rgba(0,0,0,.10), rgba(0,0,0,.72));
   z-index:-2;
 }
 
-/* ===== 光粒 ===== */
+/* ===== 光粒背景层（一直有） ===== */
 .particles::before,
 .particles::after{
-  content:"";
-  position:fixed;
-  inset:-50%;
+  content:"";position:fixed;inset:-50%;
   background:
-    radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.6), transparent),
-    radial-gradient(2px 2px at 80% 60%, rgba(255,255,255,.5), transparent),
-    radial-gradient(1.5px 1.5px at 40% 80%, rgba(200,200,255,.4), transparent),
-    radial-gradient(1.5px 1.5px at 65% 20%, rgba(200,255,255,.4), transparent);
+    radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.55), transparent),
+    radial-gradient(2px 2px at 80% 60%, rgba(255,255,255,.45), transparent),
+    radial-gradient(1.5px 1.5px at 40% 80%, rgba(200,200,255,.35), transparent),
+    radial-gradient(1.5px 1.5px at 65% 20%, rgba(200,255,255,.35), transparent),
+    radial-gradient(2px 2px at 15% 70%, rgba(180,160,255,.35), transparent),
+    radial-gradient(1.5px 1.5px at 55% 45%, rgba(160,240,255,.25), transparent);
   animation:particles 22s linear infinite;
   z-index:-1;
 }
-.particles::after{animation-duration:38s;opacity:.6}
+.particles::after{animation-duration:38s;opacity:.55}
+@keyframes particles{from{transform:translateY(0)}to{transform:translateY(-30%)}}
 
-@keyframes particles{
-  from{transform:translateY(0)}
-  to{transform:translateY(-30%)}
-}
-
-/* ===== 主体 ===== */
+/* ===== 布局 ===== */
 .wrap{
   height:100svh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:space-between;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:space-between;
   padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
-  transition:.9s ease;
+  transition:.95s cubic-bezier(.2,.9,.2,1);
 }
 
 /* ===== 标题 ===== */
-.header{
-  text-align:center;
-  margin-top:7vh;
-}
+.header{ text-align:center; margin-top:7vh; }
 .header h1{
   font-size:clamp(26px,5vw,44px);
-  font-weight:900;
-  letter-spacing:.06em;
+  font-weight:900;letter-spacing:.06em;
   margin:0 0 12px;
   background:linear-gradient(90deg,#fff,#9fd9ff);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
+  text-shadow:0 10px 30px rgba(120,200,255,.12);
 }
 .header p{
   margin:0;
-  font-size:14px;
-  letter-spacing:.25em;
-  opacity:.85;
+  font-size:14px;letter-spacing:.25em;
+  opacity:.86;
 }
 
-/* ===== 中央 ===== */
+/* ===== 中央（空位） ===== */
 .hero{
   flex:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display:flex;align-items:center;justify-content:center;
   animation:heroFloat 6s ease-in-out infinite;
 }
+@keyframes heroFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 
 /* ===== 按钮 ===== */
-.footer{
-  margin-bottom:6vh;
-  text-align:center;
-}
+.footer{ margin-bottom:6vh; text-align:center; }
 .enter{
   position:relative;
   display:inline-block;
@@ -117,48 +96,58 @@ html,body{
   color:#fff;
   background:linear-gradient(135deg,#6fdcff,#8a7bff);
   box-shadow:0 0 20px rgba(120,200,255,.5), inset 0 0 20px rgba(255,255,255,.25);
-  border:none;
-  cursor:pointer;
+  border:none;cursor:pointer;
   transition:.3s;
 }
 .enter:hover{transform:translateY(-3px) scale(1.04)}
-
 .footer small{
-  display:block;
-  margin-top:10px;
-  font-size:12px;
-  opacity:.6;
+  display:block;margin-top:10px;font-size:12px;opacity:.6;
 }
 
-/* ===== 点击特效 ===== */
+/* ===== 点击白闪 + 画面推进 ===== */
 .flash{
-  position:fixed;
-  inset:0;
-  background:white;
-  opacity:0;
-  pointer-events:none;
-  z-index:10;
-  transition:.25s;
+  position:fixed;inset:0;background:white;opacity:0;
+  pointer-events:none;z-index:10;
+  transition:.22s;
 }
-
 body.entering .flash{opacity:1}
 body.entering .wrap{
   transform:scale(1.12);
-  filter:blur(10px);
+  filter:blur(10px) saturate(1.15);
 }
-body.entering .bg{
-  transform:scale(1.25);
+body.entering .bg{ transform:scale(1.25) }
+
+/* ===== 解体粒子（覆盖在最上层） ===== */
+.burstLayer{
+  position:fixed; inset:0;
+  pointer-events:none;
+  z-index:20;
+}
+.pdot{
+  position:absolute;
+  width:6px;height:6px;border-radius:999px;
+  background:radial-gradient(circle, rgba(255,255,255,.95), rgba(160,220,255,.45) 55%, rgba(130,110,255,.0) 70%);
+  filter:drop-shadow(0 0 8px rgba(140,220,255,.55));
+  opacity:0;
+}
+@keyframes pdotFly{
+  0%{transform:translate(0,0) scale(1);opacity:1}
+  100%{transform:translate(var(--dx), var(--dy)) scale(.2);opacity:0}
 }
 
-/* ===== 动画 ===== */
-@keyframes bgFloat{
-  from{transform:scale(1.03)}
-  to{transform:scale(1.08)}
+/* ===== 被解体的元素：先淡出/抖动 ===== */
+body.shatter .header,
+body.shatter .footer{
+  animation:vanish .55s ease forwards;
 }
-@keyframes heroFloat{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-10px)}
+@keyframes vanish{
+  0%{opacity:1;transform:translateY(0) scale(1)}
+  60%{opacity:.35;transform:translateY(-6px) scale(.99)}
+  100%{opacity:0;transform:translateY(-10px) scale(.98)}
 }
+
+/* ===== 背景轻微漂浮 ===== */
+@keyframes bgFloat{from{transform:scale(1.03)}to{transform:scale(1.08)}}
 </style>
 </head>
 
@@ -167,27 +156,89 @@ body.entering .bg{
 <div class="vignette"></div>
 <div class="particles"></div>
 <div class="flash"></div>
+<div class="burstLayer" id="burstLayer"></div>
 
-<div class="wrap">
-  <div class="header">
-    <h1>你嘅旅程，由呢一刻開始</h1>
-    <p>一步踏入 ALPHA X 宇宙。</p>
+<div class="wrap" id="wrap">
+  <div class="header" id="header">
+    <h1 id="title">你嘅旅程，由呢一刻開始</h1>
+    <p id="subtitle">一步踏入 ALPHA X 宇宙。</p>
   </div>
 
   <div class="hero"></div>
 
-  <div class="footer">
-    <button class="enter" onclick="enterAlpha()">進入&nbsp;ALPHA&nbsp;X</button>
-    <small>點擊進入</small>
+  <div class="footer" id="footer">
+    <button class="enter" id="enterBtn" onclick="enterAlpha()">進入&nbsp;ALPHA&nbsp;X</button>
+    <small id="hint">點擊進入</small>
   </div>
 </div>
 
 <script>
+const TARGET_URL = "https://Alphaxhk.win"; // ← 你要跳转的网址（已帮你填好）
+
+function rand(min, max){ return Math.random() * (max - min) + min; }
+
+function spawnBurstFromElement(el, count, layer){
+  const r = el.getBoundingClientRect();
+  // 粒子从元素范围内随机出现
+  for(let i=0;i<count;i++){
+    const d = document.createElement("div");
+    d.className = "pdot";
+    const x = rand(r.left, r.right);
+    const y = rand(r.top, r.bottom);
+
+    // 飞散方向：向外扩散 + 少量向上
+    const angle = rand(0, Math.PI * 2);
+    const dist  = rand(80, 520);
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist - rand(20, 180);
+
+    d.style.left = x + "px";
+    d.style.top  = y + "px";
+    d.style.setProperty("--dx", dx.toFixed(1) + "px");
+    d.style.setProperty("--dy", dy.toFixed(1) + "px");
+
+    // 粒子大小随机
+    const s = rand(3, 8);
+    d.style.width = s + "px";
+    d.style.height = s + "px";
+
+    // 颜色随机偏蓝紫
+    const hue = rand(190, 265);
+    d.style.background = `radial-gradient(circle, hsla(${hue},100%,92%,.95), hsla(${hue},100%,70%,.45) 55%, hsla(${hue},100%,60%,0) 72%)`;
+
+    // 延迟与时长
+    const delay = rand(0, 120);
+    const dur = rand(520, 980);
+    d.style.animation = `pdotFly ${dur}ms ease-out ${delay}ms forwards`;
+
+    layer.appendChild(d);
+
+    // 触发显示（opacity）
+    requestAnimationFrame(()=>{ d.style.opacity = "1"; });
+
+    // 清理
+    setTimeout(()=> d.remove(), dur + delay + 50);
+  }
+}
+
 function enterAlpha(){
-  document.body.classList.add("entering");
-  setTimeout(()=>{
-    window.location.href = "#"; // ← 这里换成你的真正入口链接
-  },900);
+  const btn = document.getElementById("enterBtn");
+  btn.disabled = true;
+
+  const layer = document.getElementById("burstLayer");
+  document.body.classList.add("shatter");
+
+  // 标题/副标题/按钮/提示 解体粒子数量
+  spawnBurstFromElement(document.getElementById("title"), 120, layer);
+  spawnBurstFromElement(document.getElementById("subtitle"), 70, layer);
+  spawnBurstFromElement(document.getElementById("enterBtn"), 160, layer);
+  spawnBurstFromElement(document.getElementById("hint"), 40, layer);
+
+  // 0.35s 后开始推进+白闪（衔接更丝滑）
+  setTimeout(()=> document.body.classList.add("entering"), 350);
+
+  // 0.95s 后跳转
+  setTimeout(()=>{ window.location.href = TARGET_URL; }, 950);
 }
 </script>
 </body>

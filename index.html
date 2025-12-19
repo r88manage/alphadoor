@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>ALPHA X</title>
 
-  <!-- 字体（可删） -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
@@ -15,11 +14,7 @@
       --bg-desktop: url("./bg-desktop-1920x1080.jpg");
       --bg-mobile:  url("./bg-mobile.png");
       --txt: rgba(255,255,255,.92);
-      --txt2: rgba(255,255,255,.78);
-      --cyan: rgba(120,220,255,1);
-      --violet: rgba(180,110,255,1);
-      --glow: rgba(120,220,255,.35);
-      --glow2: rgba(180,110,255,.30);
+      --txt2: rgba(255,255,255,.76);
     }
 
     *{ box-sizing:border-box; }
@@ -28,42 +23,35 @@
       margin:0;
       color:var(--txt);
       font-family:"Noto Sans TC","PingFang HK",system-ui,-apple-system,Segoe UI,Roboto,Arial;
-      overflow:hidden;
       background:#000;
+      overflow:hidden;
     }
 
-    /* ====== 满屏背景层 ====== */
+    /* ====== 满屏背景 ====== */
     .bg{
       position:fixed; inset:0;
       background-image: var(--bg-desktop);
       background-size: cover;
       background-position: center center;
       background-repeat: no-repeat;
-      transform: scale(1.05);
-      will-change: transform, filter;
-      animation: bgFloat 12s ease-in-out infinite alternate;
       z-index:-5;
     }
-    /* 手机优先用竖图：用“纵向 / 小屏 / 竖屏”触发，避免某些手机宽度判断不准 */
+    /* 手机优先用竖图：更稳 */
     @media (max-width: 820px), (max-aspect-ratio: 3/4), (orientation: portrait){
       .bg{ background-image: var(--bg-mobile); }
     }
-    @keyframes bgFloat{
-      from{ transform: scale(1.05) translateY(0px); filter: saturate(1.05) contrast(1.02); }
-      to{   transform: scale(1.12) translateY(-10px); filter: saturate(1.10) contrast(1.05); }
-    }
 
-    /* 暗角 + 让字更清晰 */
+    /* 暗角提升文字可读性 */
     .vignette{
       position:fixed; inset:0;
-      background:
-        radial-gradient(80% 60% at 50% 40%, rgba(0,0,0,.15), rgba(0,0,0,.72)),
-        radial-gradient(60% 40% at 50% 85%, rgba(0,0,0,.15), rgba(0,0,0,.78));
+      background: radial-gradient(80% 60% at 50% 40%, rgba(0,0,0,.15), rgba(0,0,0,.72));
       z-index:-4;
       pointer-events:none;
     }
 
-    /* ====== 星空光粒（纯 CSS，密一点、小一点、会飘） ====== */
+    /* ====== 轻量星空光粒：三层小点 + 慢漂移 ======
+       关键：不使用 filter / blur / drop-shadow，性能更好
+    */
     .stars, .stars::before, .stars::after{
       position:fixed; inset:-20%;
       content:"";
@@ -71,46 +59,46 @@
       pointer-events:none;
       z-index:-3;
       background-repeat: repeat;
-      mix-blend-mode: screen;
-      opacity:.75;
-      will-change: transform, opacity, filter;
-      filter: drop-shadow(0 0 8px rgba(140,200,255,.12));
-      animation: drift 18s linear infinite;
+      opacity:.72;
+      will-change: transform;
+      animation: drift 28s linear infinite;
     }
 
-    /* 三层：小星(最密)、中星、微光尘 */
+    /* 最密小星 */
     .stars{
       background-image:
-        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.90), transparent 55%),
-        radial-gradient(1px 1px at 30% 80%, rgba(200,240,255,.85), transparent 55%),
-        radial-gradient(1px 1px at 70% 40%, rgba(210,190,255,.85), transparent 55%),
-        radial-gradient(1px 1px at 90% 10%, rgba(255,255,255,.75), transparent 55%),
-        radial-gradient(1px 1px at 45% 55%, rgba(180,220,255,.80), transparent 55%),
-        radial-gradient(1px 1px at 80% 75%, rgba(255,255,255,.70), transparent 55%),
-        radial-gradient(1px 1px at 15% 65%, rgba(210,190,255,.70), transparent 55%),
-        radial-gradient(1px 1px at 55% 15%, rgba(255,255,255,.80), transparent 55%);
+        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.80), transparent 55%),
+        radial-gradient(1px 1px at 30% 80%, rgba(200,240,255,.72), transparent 55%),
+        radial-gradient(1px 1px at 70% 40%, rgba(210,190,255,.70), transparent 55%),
+        radial-gradient(1px 1px at 90% 10%, rgba(255,255,255,.62), transparent 55%),
+        radial-gradient(1px 1px at 45% 55%, rgba(180,220,255,.68), transparent 55%),
+        radial-gradient(1px 1px at 80% 75%, rgba(255,255,255,.58), transparent 55%),
+        radial-gradient(1px 1px at 15% 65%, rgba(210,190,255,.55), transparent 55%),
+        radial-gradient(1px 1px at 55% 15%, rgba(255,255,255,.66), transparent 55%);
       background-size: 220px 220px;
     }
+
+    /* 中密中星 */
     .stars::before{
-      opacity:.55;
-      filter: drop-shadow(0 0 10px rgba(180,110,255,.10));
-      animation-duration: 26s;
+      opacity:.45;
+      animation-duration: 42s;
       background-image:
-        radial-gradient(1.5px 1.5px at 20% 30%, rgba(180,220,255,.65), transparent 60%),
-        radial-gradient(1.5px 1.5px at 60% 70%, rgba(255,255,255,.60), transparent 60%),
-        radial-gradient(1.5px 1.5px at 85% 55%, rgba(210,190,255,.55), transparent 60%),
-        radial-gradient(1.5px 1.5px at 35% 90%, rgba(255,255,255,.50), transparent 60%),
-        radial-gradient(1.5px 1.5px at 75% 20%, rgba(180,220,255,.55), transparent 60%);
+        radial-gradient(1.4px 1.4px at 20% 30%, rgba(180,220,255,.55), transparent 60%),
+        radial-gradient(1.4px 1.4px at 60% 70%, rgba(255,255,255,.50), transparent 60%),
+        radial-gradient(1.4px 1.4px at 85% 55%, rgba(210,190,255,.45), transparent 60%),
+        radial-gradient(1.4px 1.4px at 35% 90%, rgba(255,255,255,.42), transparent 60%),
+        radial-gradient(1.4px 1.4px at 75% 20%, rgba(180,220,255,.46), transparent 60%);
       background-size: 360px 360px;
     }
+
+    /* 微光尘（更稀疏） */
     .stars::after{
-      opacity:.35;
-      animation-duration: 38s;
-      filter: blur(.2px) drop-shadow(0 0 14px rgba(120,220,255,.10));
+      opacity:.28;
+      animation-duration: 60s;
       background-image:
-        radial-gradient(2px 2px at 50% 50%, rgba(160,220,255,.35), transparent 65%),
-        radial-gradient(2px 2px at 20% 75%, rgba(200,180,255,.28), transparent 65%),
-        radial-gradient(2px 2px at 80% 25%, rgba(255,255,255,.22), transparent 65%);
+        radial-gradient(2px 2px at 50% 50%, rgba(160,220,255,.28), transparent 65%),
+        radial-gradient(2px 2px at 20% 75%, rgba(200,180,255,.22), transparent 65%),
+        radial-gradient(2px 2px at 80% 25%, rgba(255,255,255,.18), transparent 65%);
       background-size: 520px 520px;
     }
 
@@ -119,18 +107,15 @@
       to{   transform: translate3d(-6%, -10%, 0); }
     }
 
-    /* ====== 点击粒子（Canvas） ====== */
-    #fx{
-      position:fixed; inset:0;
-      z-index:-2; /* 在内容后，但在背景/星层前也OK；我们让它在内容上面更炸裂 */
-      pointer-events:none;
+    /* 减少动态：尊重系统设置（更省电） */
+    @media (prefers-reduced-motion: reduce){
+      .stars,.stars::before,.stars::after{ animation:none !important; }
     }
 
-    /* ====== 主布局：标题上、入口下 ====== */
+    /* ====== 布局：标题上、入口下 ====== */
     .stage{
-      position:relative;
       min-height:100svh;
-      min-height:100vh; /* 兼容 */
+      min-height:100vh;
       padding:
         max(18px, env(safe-area-inset-top))
         max(18px, env(safe-area-inset-right))
@@ -145,7 +130,7 @@
 
     .top{
       width:min(980px, 92vw);
-      padding-top: clamp(20px, 6vh, 70px);
+      padding-top: clamp(18px, 6vh, 70px);
     }
     .title{
       margin:0;
@@ -153,9 +138,7 @@
       letter-spacing:.02em;
       line-height:1.08;
       font-size: clamp(28px, 5vw, 56px);
-      text-shadow:
-        0 10px 40px rgba(0,0,0,.55),
-        0 0 22px rgba(120,220,255,.12);
+      text-shadow: 0 10px 40px rgba(0,0,0,.55);
     }
     .subtitle{
       margin: 12px 0 0;
@@ -176,7 +159,7 @@
       gap: 10px;
     }
 
-    /* 旧款“发光胶囊按钮” */
+    /* 旧款发光胶囊按钮（保留，但不做重特效） */
     .enter{
       -webkit-tap-highlight-color: transparent;
       user-select:none;
@@ -199,11 +182,8 @@
       gap: 10px;
       box-shadow:
         0 18px 55px rgba(0,0,0,.55),
-        0 0 0 1px rgba(120,220,255,.12) inset,
-        0 0 32px rgba(120,220,255,.22),
-        0 0 48px rgba(180,110,255,.18);
-      transform: translateZ(0);
-      transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+        0 0 0 1px rgba(120,220,255,.12) inset;
+      transition: transform .15s ease, filter .15s ease;
       width: min(520px, 82vw);
       max-width: 520px;
     }
@@ -212,19 +192,8 @@
       font-weight: 800;
       letter-spacing:.22em;
     }
-    .enter:hover{
-      transform: translateY(-2px) scale(1.02);
-      filter: brightness(1.08);
-      box-shadow:
-        0 22px 70px rgba(0,0,0,.60),
-        0 0 0 1px rgba(120,220,255,.16) inset,
-        0 0 44px rgba(120,220,255,.28),
-        0 0 62px rgba(180,110,255,.22);
-    }
-    .enter:active{
-      transform: translateY(0px) scale(.99);
-      filter: brightness(0.98);
-    }
+    .enter:hover{ transform: translateY(-1px); filter: brightness(1.05); }
+    .enter:active{ transform: translateY(0px) scale(.99); filter: brightness(.98); }
 
     .hint{
       font-size: 12px;
@@ -233,189 +202,26 @@
       text-shadow: 0 10px 30px rgba(0,0,0,.55);
       margin-top:2px;
     }
-
-    /* “往前走”的假动效：整个舞台轻微推进 + 内容浮动 */
-    .push{
-      animation: push 3.6s ease-in-out infinite;
-    }
-    @keyframes push{
-      0%,100%{ transform: translateY(0); }
-      50%{ transform: translateY(-6px); }
-    }
-
-    /* 点击进入：整体解体前的闪光/模糊过渡 */
-    .leaving .stage{
-      animation: leaveFade .9s ease forwards;
-    }
-    @keyframes leaveFade{
-      0%{ opacity:1; filter: blur(0px) saturate(1); transform: translateY(0); }
-      40%{ opacity:1; filter: blur(1px) saturate(1.05); }
-      100%{ opacity:0; filter: blur(8px) saturate(1.2); transform: translateY(-12px); }
-    }
-
-    /* 减少动态：尊重系统设置 */
-    @media (prefers-reduced-motion: reduce){
-      .bg,.stars,.push{ animation:none !important; }
-    }
   </style>
 </head>
 
 <body>
-  <!-- 背景层（必须要有，不然会黑屏） -->
   <div class="bg" aria-hidden="true"></div>
   <div class="vignette" aria-hidden="true"></div>
   <div class="stars" aria-hidden="true"></div>
 
-  <!-- 点击粒子层 -->
-  <canvas id="fx"></canvas>
-
   <main class="stage">
-    <section class="top push">
+    <section class="top">
       <h1 class="title">你嘅旅程，由呢一刻開始</h1>
       <p class="subtitle">一步踏入 <span style="font-family:Orbitron,system-ui;letter-spacing:.25em;">ALPHA X</span> 宇宙。</p>
     </section>
 
-    <section class="bottom push">
-      <!-- 这里改成你的跳转链接 -->
-      <a class="enter" id="enterBtn" href="https://alphaxhk.win" rel="noopener">
+    <section class="bottom">
+      <a class="enter" href="https://alphaxhk.win" rel="noopener">
         進入 <span class="orb">ALPHA X</span>
       </a>
       <div class="hint">點擊進入</div>
     </section>
   </main>
-
-  <script>
-    // ======================
-    // 点击/进入“解体成光粒”特效（Canvas）
-    // ======================
-    const canvas = document.getElementById("fx");
-    const ctx = canvas.getContext("2d", { alpha: true });
-    let W=0, H=0, DPR=1;
-
-    function resize(){
-      DPR = Math.min(2, window.devicePixelRatio || 1);
-      W = Math.floor(window.innerWidth);
-      H = Math.floor(window.innerHeight);
-      canvas.width  = Math.floor(W * DPR);
-      canvas.height = Math.floor(H * DPR);
-      canvas.style.width = W + "px";
-      canvas.style.height = H + "px";
-      ctx.setTransform(DPR,0,0,DPR,0,0);
-    }
-    window.addEventListener("resize", resize, { passive:true });
-    resize();
-
-    const particles = [];
-    const palette = [
-      [120,220,255],  // cyan
-      [180,110,255],  // violet
-      [255,255,255],  // white
-      [160,220,255],
-      [210,190,255]
-    ];
-
-    function rand(min,max){ return min + Math.random()*(max-min); }
-
-    function burst(x,y, power=1){
-      const count = Math.floor(80*power);
-      for(let i=0;i<count;i++){
-        const c = palette[(Math.random()*palette.length)|0];
-        const angle = Math.random()*Math.PI*2;
-        const speed = rand(2.2, 7.2) * power;
-        particles.push({
-          x, y,
-          vx: Math.cos(angle)*speed,
-          vy: Math.sin(angle)*speed - rand(0, 1.4),
-          r: rand(0.6, 1.6),
-          a: rand(0.55, 1),
-          life: rand(28, 55),
-          g: rand(0.06, 0.10),
-          c
-        });
-      }
-    }
-
-    function flash(x,y){
-      particles.push({
-        x,y,vx:0,vy:0,r:1,a:0.8,life:18,g:0,c:[255,255,255],
-        type:"flash"
-      });
-    }
-
-    function tick(){
-      ctx.clearRect(0,0,W,H);
-
-      // 轻微“光雾”
-      ctx.globalCompositeOperation = "lighter";
-      for(let i=particles.length-1;i>=0;i--){
-        const p = particles[i];
-        p.life -= 1;
-        if(p.life<=0){ particles.splice(i,1); continue; }
-
-        if(p.type==="flash"){
-          const t = p.life/18;
-          const R = (1-t)*180;
-          const grd = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,R);
-          grd.addColorStop(0, `rgba(255,255,255,${0.30*t})`);
-          grd.addColorStop(0.4, `rgba(120,220,255,${0.18*t})`);
-          grd.addColorStop(1, `rgba(0,0,0,0)`);
-          ctx.fillStyle = grd;
-          ctx.beginPath();
-          ctx.arc(p.x,p.y,R,0,Math.PI*2);
-          ctx.fill();
-          continue;
-        }
-
-        p.vy += p.g;
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vx *= 0.985;
-        p.vy *= 0.985;
-
-        // 尾焰
-        const [r,g,b] = p.c;
-        ctx.fillStyle = `rgba(${r},${g},${b},${p.a})`;
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-        ctx.fill();
-
-        // 让粒子慢慢消失
-        p.a *= 0.975;
-        p.r *= 0.993;
-      }
-
-      ctx.globalCompositeOperation = "source-over";
-      requestAnimationFrame(tick);
-    }
-    tick();
-
-    // 全局点击：星尘爆裂（小一点更细密）
-    window.addEventListener("pointerdown", (e)=>{
-      const x = e.clientX, y = e.clientY;
-      burst(x,y, 0.7);
-    }, { passive:true });
-
-    // 点击按钮：解体成光粒 + 闪光 + 过渡后跳转
-    const btn = document.getElementById("enterBtn");
-    btn.addEventListener("click", (e)=>{
-      e.preventDefault();
-      const rect = btn.getBoundingClientRect();
-      const x = rect.left + rect.width/2;
-      const y = rect.top + rect.height/2;
-
-      flash(x,y);
-      burst(x,y, 1.25);
-
-      // 额外“环形爆裂”更震撼
-      for(let k=0;k<5;k++){
-        setTimeout(()=>burst(x + rand(-18,18), y + rand(-10,10), 0.9), k*60);
-      }
-
-      document.body.classList.add("leaving");
-
-      const href = btn.getAttribute("href");
-      setTimeout(()=>{ window.location.href = href; }, 900);
-    });
-  </script>
 </body>
 </html>

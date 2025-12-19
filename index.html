@@ -1,464 +1,169 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-HK">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ALPHA X</title>
 
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --c-cyan: rgba(0,255,255,.85);
-      --c-violet: rgba(180,90,255,.92);
-      --line: rgba(160,200,255,.18);
-      --bg: #050513;
+      --cyan: rgba(120,220,255,.95);
+      --violet: rgba(170,120,255,.95);
+      --glass: rgba(255,255,255,.08);
     }
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; margin:0; background:var(--bg); }
-    body{
-      font-family: "Noto Sans TC","PingFang HK",system-ui,-apple-system,Segoe UI,Roboto,Arial;
-      background: var(--bg) url("./bg.jpg") center/cover no-repeat fixed;
-      overflow:hidden;
-      color:#fff;
-    }
-    .overlay{
-      position:fixed; inset:0;
-      background:
-        radial-gradient(60% 60% at 50% 38%, rgba(130,80,255,.26), rgba(0,0,0,.84)),
-        linear-gradient(180deg, rgba(10,5,30,.35), rgba(0,0,0,.90));
-      pointer-events:none;
-      z-index:0;
-    }
-    .grain{
-      position:fixed; inset:-20%;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
-      mix-blend-mode: overlay;
-      opacity:.10;
-      pointer-events:none;
-      animation: drift 12s linear infinite;
-      z-index:0;
-    }
-    @keyframes drift { to { transform: translate3d(-8%, 6%, 0); } }
 
+    *{ box-sizing:border-box; }
+
+    html,body{
+      height:100%;
+      margin:0;
+      font-family:"Noto Sans TC","PingFang HK","Segoe UI",Arial,sans-serif;
+      color:#fff;
+      background:#050513;
+      overflow:hidden;
+    }
+
+    body{
+      background:
+        url("./bg.jpg") center / cover no-repeat fixed;
+    }
+
+    /* 背景能量層 */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:
+        radial-gradient(60% 60% at 50% 35%, rgba(120,180,255,.25), rgba(0,0,0,.85)),
+        linear-gradient(180deg, rgba(5,5,25,.3), rgba(0,0,0,.9));
+      z-index:0;
+      pointer-events:none;
+    }
+
+    /* 主容器 */
     .wrap{
       position:relative;
-      height:100%;
-      display:grid;
-      place-items:center;
-      padding: 22px 16px;
       z-index:1;
-    }
-    .hero{
-      width:min(920px, 94vw);
-      text-align:center;
-      padding: 28px 18px 30px;
-      border-radius: 28px;
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
-      border: 1px solid var(--line);
-      box-shadow: 0 30px 120px rgba(0,0,0,.55);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
     }
 
-    .title{
-      font-size: clamp(30px, 4.5vw, 58px);
-      font-weight: 900;
-      letter-spacing: .06em;
-      margin: 6px 0 10px;
-      line-height:1.15;
-      background: linear-gradient(90deg, rgba(255,255,255,.95), rgba(180,160,255,.95), rgba(0,255,255,.92));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow:
-        0 0 22px rgba(180,90,255,.40),
-        0 14px 70px rgba(0,0,0,.82);
+    /* ===== 方案 B：下沉玻璃卡 ===== */
+    .hero{
+      position:relative;
+      width:min(860px, 94vw);
+      padding:28px 22px 30px;
+      border-radius:28px;
+      transform:translateY(70px);
+      background:linear-gradient(
+        to bottom,
+        rgba(255,255,255,.08),
+        rgba(255,255,255,.03),
+        rgba(255,255,255,.06)
+      );
+      backdrop-filter:blur(12px);
+      box-shadow:
+        0 30px 80px rgba(0,0,0,.55),
+        inset 0 0 0 1px rgba(255,255,255,.08);
+      text-align:center;
     }
-    .cursor{
-      display:inline-block;
-      width:.55em; height: 1em;
-      transform: translateY(.12em);
-      border-left: 3px solid rgba(255,255,255,.85);
-      margin-left:.12em;
-      animation: blink .9s steps(1) infinite;
-      opacity:.9;
+
+    /* 中央透明窗口（讓狐狸露出） */
+    .hero::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      pointer-events:none;
+      background:radial-gradient(
+        70% 90% at 50% 45%,
+        rgba(0,0,0,.08) 0%,
+        rgba(0,0,0,.22) 55%,
+        rgba(0,0,0,.55) 100%
+      );
     }
-    @keyframes blink { 50% { opacity:0; } }
+
+    h1{
+      margin:0 0 10px;
+      font-size:clamp(28px, 4.5vw, 44px);
+      font-weight:900;
+      letter-spacing:.02em;
+      background:linear-gradient(90deg, #ffffff, var(--cyan));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
 
     .subtitle{
-      font-size: clamp(14px, 2vw, 18px);
-      letter-spacing: .18em;
-      opacity: .86;
-      margin: 0 0 26px;
+      margin:0 0 22px;
+      font-size:clamp(15px, 2.5vw, 18px);
+      opacity:.9;
     }
 
-    .btn{
-      appearance:none;
-      border: 1px solid rgba(160,200,255,.60);
-      background: linear-gradient(180deg, rgba(60,140,255,.28), rgba(120,60,255,.20));
+    /* 按鈕 */
+    .enter-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:14px 34px;
+      border-radius:999px;
+      font-family:"Orbitron",sans-serif;
+      font-size:16px;
+      letter-spacing:.12em;
       color:#fff;
-      padding: 18px 44px;
-      font-size: clamp(18px, 2.4vw, 24px);
-      font-weight: 800;
-      letter-spacing: .22em;
-      border-radius: 18px;
-      cursor:pointer;
+      text-decoration:none;
+      background:linear-gradient(135deg, var(--cyan), var(--violet));
+      box-shadow:
+        0 0 25px rgba(140,180,255,.6),
+        0 0 60px rgba(140,120,255,.35);
+      transition:.35s ease;
       position:relative;
-      user-select:none;
-      font-family: "Orbitron","Noto Sans TC",system-ui;
-      box-shadow:
-        0 0 0 1px rgba(0,255,255,.12) inset,
-        0 18px 60px rgba(90,140,255,.35),
-        0 28px 120px rgba(180,90,255,.25);
-      transition: transform .14s ease, box-shadow .22s ease, border-color .22s ease, filter .22s ease;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      overflow:hidden;
-      isolation:isolate;
     }
-    .btn::before{
-      content:"";
-      position:absolute; inset:-3px;
-      border-radius: 20px;
-      background: conic-gradient(from 180deg,
-        rgba(0,255,255,0),
-        rgba(0,255,255,.78),
-        rgba(180,90,255,.88),
-        rgba(0,255,255,0)
-      );
-      filter: blur(14px);
-      z-index:-1;
-      animation: spin 3.4s linear infinite;
-      opacity:.95;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .btn::after{
-      content:"";
-      position:absolute; inset:0;
-      border-radius: 18px;
-      background: repeating-linear-gradient(
-        90deg,
-        rgba(255,255,255,.10) 0px,
-        rgba(255,255,255,.10) 2px,
-        rgba(255,255,255,0) 10px,
-        rgba(255,255,255,0) 18px
-      );
-      opacity:.10;
-      pointer-events:none;
-      mix-blend-mode: overlay;
-    }
-    .btn:hover{
-      transform: translateY(-2px);
-      border-color: rgba(0,255,255,.65);
-      filter: saturate(1.12);
-      box-shadow:
-        0 0 0 1px rgba(0,255,255,.20) inset,
-        0 26px 80px rgba(120,160,255,.45),
-        0 40px 160px rgba(200,120,255,.35);
-    }
-    .btn:active{ transform: translateY(0px) scale(.99); }
 
-    .ripple{
-      position:absolute;
-      border-radius: 999px;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(circle, rgba(0,255,255,.55), rgba(180,90,255,.22), rgba(255,255,255,0));
-      pointer-events:none;
-      animation: ripple 820ms ease-out forwards;
-      mix-blend-mode: screen;
+    .enter-btn:hover{
+      transform:translateY(-2px) scale(1.04);
+      box-shadow:
+        0 0 35px rgba(160,200,255,.9),
+        0 0 90px rgba(170,140,255,.6);
     }
-    @keyframes ripple{
-      from{ width:0px; height:0px; opacity:.95; }
-      to{ width: 560px; height:560px; opacity:0; }
-    }
+
     .hint{
-      margin-top: 14px;
-      font-size: 13px;
-      letter-spacing: .14em;
-      opacity:.70;
+      margin-top:10px;
+      font-size:12px;
+      opacity:.65;
     }
 
-    .splash{
-      position:fixed; inset:0;
-      display:grid;
-      place-items:center;
-      background:
-        radial-gradient(70% 70% at 50% 45%, rgba(120,70,255,.20), rgba(0,0,0,.92)),
-        linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.92));
-      z-index: 50;
-    }
-    .splashCard{
-      width: min(520px, 88vw);
-      padding: 22px 18px;
-      border-radius: 22px;
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
-      border: 1px solid rgba(160,200,255,.18);
-      box-shadow: 0 30px 120px rgba(0,0,0,.65);
-      text-align:center;
-      backdrop-filter: blur(10px);
-    }
-    .logo{
-      font-family:"Orbitron","Noto Sans TC",system-ui;
-      font-weight: 900;
-      letter-spacing: .28em;
-      font-size: 18px;
-      opacity:.92;
-      margin-bottom: 14px;
-    }
-    .ring{
-      width: 120px; height: 120px;
-      margin: 0 auto 12px;
-      border-radius: 999px;
-      background:
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,.08), rgba(255,255,255,0) 60%),
-        conic-gradient(from 180deg, rgba(0,255,255,.0), rgba(0,255,255,.7), rgba(180,90,255,.75), rgba(0,255,255,.0));
-      filter: blur(.2px) drop-shadow(0 0 22px rgba(0,255,255,.28));
-      animation: spin 1.5s linear infinite;
-      position:relative;
-    }
-    .ring::after{
-      content:"";
-      position:absolute; inset: 16px;
-      border-radius:999px;
-      background: rgba(0,0,0,.55);
-      border: 1px solid rgba(160,200,255,.12);
-      backdrop-filter: blur(8px);
-    }
-    .bar{
-      height: 10px;
-      width: 100%;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      overflow:hidden;
-      border: 1px solid rgba(160,200,255,.14);
-      margin-top: 14px;
-    }
-    .bar > i{
-      display:block;
-      height:100%;
-      width: 0%;
-      background: linear-gradient(90deg, rgba(0,255,255,.75), rgba(180,90,255,.85));
-      box-shadow: 0 0 18px rgba(0,255,255,.35);
-      border-radius: 999px;
-      transition: width 1.1s ease;
-    }
-    .splashText{
-      margin-top: 10px;
-      letter-spacing:.18em;
-      font-size: 12px;
-      opacity:.72;
-    }
-    .fadeOut{ animation: fadeOut .55s ease forwards; }
-    @keyframes fadeOut { to { opacity:0; transform: translateY(-6px); } }
-
-    .transition{
-      position:fixed; inset:0;
-      display:none;
-      place-items:center;
-      background:
-        radial-gradient(70% 70% at 50% 45%, rgba(0,255,255,.10), rgba(0,0,0,.92)),
-        linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.92));
-      z-index: 60;
-    }
-    .transition.show{ display:grid; }
-    .portal{
-      width:min(520px, 88vw);
-      border-radius: 28px;
-      padding: 24px 18px 20px;
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      border: 1px solid rgba(160,200,255,.18);
-      text-align:center;
-      box-shadow: 0 40px 160px rgba(0,0,0,.75);
-      transform: scale(.96);
-      opacity:0;
-      animation: pop .35s ease forwards;
-      backdrop-filter: blur(10px);
-    }
-    @keyframes pop { to { transform: scale(1); opacity:1; } }
-    .portalRing{
-      width: 160px; height: 160px;
-      margin: 0 auto 14px;
-      border-radius: 999px;
-      background:
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,.12), rgba(255,255,255,0) 58%),
-        conic-gradient(from 90deg, rgba(0,255,255,.0), rgba(0,255,255,.75), rgba(180,90,255,.88), rgba(0,255,255,.0));
-      filter: blur(.3px) drop-shadow(0 0 28px rgba(180,90,255,.30));
-      animation: spin 1.15s linear infinite;
-      position:relative;
-    }
-    .portalRing::after{
-      content:"";
-      position:absolute; inset: 18px;
-      border-radius:999px;
-      background: rgba(0,0,0,.62);
-      border: 1px solid rgba(160,200,255,.12);
-      backdrop-filter: blur(10px);
-    }
-    .portalTitle{
-      font-family:"Orbitron","Noto Sans TC",system-ui;
-      font-weight: 900;
-      letter-spacing: .22em;
-      font-size: 14px;
-      opacity:.88;
-    }
-    .portalHint{
-      margin-top: 8px;
-      font-size: 12px;
-      letter-spacing:.18em;
-      opacity:.70;
-    }
-
-    @media (max-width: 520px){
-      .hero{ padding: 22px 14px 26px; border-radius: 22px; }
-      .btn{ padding: 16px 28px; border-radius: 16px; }
+    /* 手機 */
+    @media (max-width:520px){
+      .hero{
+        transform:translateY(30px);
+        padding:22px 16px 24px;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="overlay"></div>
-  <div class="grain"></div>
-
-  <div id="splash" class="splash" aria-hidden="true">
-    <div class="splashCard">
-      <div class="logo">ALPHA X</div>
-      <div class="ring" aria-hidden="true"></div>
-      <div class="bar"><i id="sbar"></i></div>
-      <div class="splashText" id="splashText">正在啟動傳送門…</div>
-    </div>
-  </div>
-
-  <div id="transition" class="transition" aria-hidden="true">
-    <div class="portal">
-      <div class="portalRing" aria-hidden="true"></div>
-      <div class="portalTitle">正在進入 ALPHA X</div>
-      <div class="bar" style="margin-top:14px;"><i id="tbar"></i></div>
-      <div class="portalHint" id="portalHint">同步中…</div>
-    </div>
-  </div>
 
   <div class="wrap">
-    <main class="hero" role="main">
-      <div class="title"><span id="type"></span><span class="cursor" aria-hidden="true"></span></div>
+    <div class="hero">
+      <h1>你嘅旅程，由呢一刻開始</h1>
       <div class="subtitle">一步踏入 ALPHA X 宇宙。</div>
 
-      <button id="enterBtn" class="btn" type="button" aria-label="進入 ALPHA X">
+      <a class="enter-btn" href="https://alphaxhk.win">
         進入&nbsp;ALPHA&nbsp;X
-      </button>
+      </a>
+
       <div class="hint">點擊進入</div>
-    </main>
+    </div>
   </div>
-
-  <script>
-    // WebAudio click sfx (no external file)
-    function playClick(){
-      try{
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const now = ctx.currentTime;
-
-        const o1 = ctx.createOscillator();
-        const g1 = ctx.createGain();
-        o1.type = "triangle";
-        o1.frequency.setValueAtTime(780, now);
-        o1.frequency.exponentialRampToValueAtTime(220, now + 0.08);
-        g1.gain.setValueAtTime(0.0001, now);
-        g1.gain.exponentialRampToValueAtTime(0.20, now + 0.01);
-        g1.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
-        o1.connect(g1).connect(ctx.destination);
-        o1.start(now);
-        o1.stop(now + 0.13);
-
-        const bufferSize = 2 * ctx.sampleRate;
-        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const out = noiseBuffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) out[i] = (Math.random() * 2 - 1);
-        const noise = ctx.createBufferSource();
-        noise.buffer = noiseBuffer;
-        const band = ctx.createBiquadFilter();
-        band.type = "bandpass";
-        band.frequency.setValueAtTime(900, now);
-        band.frequency.exponentialRampToValueAtTime(420, now + 0.20);
-        const gn = ctx.createGain();
-        gn.gain.setValueAtTime(0.0001, now);
-        gn.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
-        gn.gain.exponentialRampToValueAtTime(0.0001, now + 0.24);
-        noise.connect(band).connect(gn).connect(ctx.destination);
-        noise.start(now);
-        noise.stop(now + 0.25);
-      }catch(e){}
-    }
-
-    // Typing title (Cantonese)
-    const titleText = "你嘅旅程，由呢一刻開始";
-    const typeEl = document.getElementById("type");
-    let i = 0;
-    function typeTick(){
-      typeEl.textContent = titleText.slice(0, i);
-      if(i < titleText.length){
-        i++;
-        setTimeout(typeTick, 38 + Math.random()*42);
-      }
-    }
-
-    // Ripple
-    const btn = document.getElementById("enterBtn");
-    btn.addEventListener("pointerdown", (e) => {
-      const r = document.createElement("span");
-      r.className = "ripple";
-      const rect = btn.getBoundingClientRect();
-      r.style.left = (e.clientX - rect.left) + "px";
-      r.style.top  = (e.clientY - rect.top) + "px";
-      btn.appendChild(r);
-      r.addEventListener("animationend", () => r.remove(), { once: true });
-    });
-
-    // Portal transition + redirect
-    const transition = document.getElementById("transition");
-    const tbar = document.getElementById("tbar");
-    const portalHint = document.getElementById("portalHint");
-
-    function startTransition(){
-      playClick();
-
-      transition.classList.add("show");
-      document.body.animate(
-        [{ transform:"scale(1)", filter:"blur(0px) saturate(1)" },
-         { transform:"scale(1.06)", filter:"blur(1.8px) saturate(1.25)" }],
-        { duration: 560, fill:"forwards", easing:"cubic-bezier(.2,.8,.2,1)" }
-      );
-
-      tbar.style.width = "0%";
-      const hints = ["同步中…", "連接傳送門…", "準備進入…"];
-      let hi = 0;
-      const hintTimer = setInterval(() => {
-        portalHint.textContent = hints[Math.min(hi, hints.length-1)];
-        hi++;
-        if(hi > hints.length) clearInterval(hintTimer);
-      }, 520);
-
-      requestAnimationFrame(() => { tbar.style.width = "100%"; });
-      setTimeout(() => { window.location.href = "https://Alphaxhk.win"; }, 1900);
-    }
-    btn.addEventListener("click", startTransition);
-
-    // Splash loading
-    const splash = document.getElementById("splash");
-    const sbar = document.getElementById("sbar");
-    const splashText = document.getElementById("splashText");
-
-    function startSplash(){
-      setTimeout(() => { sbar.style.width = "40%"; splashText.textContent = "正在啟動傳送門…"; }, 80);
-      setTimeout(() => { sbar.style.width = "78%"; splashText.textContent = "校準光軌中…"; }, 520);
-      setTimeout(() => { sbar.style.width = "100%"; splashText.textContent = "就緒。"; }, 980);
-      setTimeout(() => {
-        splash.classList.add("fadeOut");
-        setTimeout(() => splash.remove(), 560);
-        typeTick();
-      }, 1350);
-    }
-    startSplash();
-  </script>
 </body>
 </html>

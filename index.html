@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ALPHA X</title>
 
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
@@ -15,226 +16,243 @@
       --cyan: rgba(120,220,255,.95);
       --violet: rgba(180,110,255,.95);
       --line: rgba(180,220,255,.18);
-      --shadow: rgba(0,0,0,.55);
+      --shadow: rgba(0,0,0,.6);
     }
+
     *{ box-sizing:border-box; }
-    html,body{ height:100%; margin:0; background:var(--bg); }
-    body{
+
+    html,body{
+      height:100%;
+      margin:0;
+      background:var(--bg);
+      overflow:hidden;
       font-family:"Noto Sans TC","PingFang HK",system-ui,-apple-system,Segoe UI,Roboto,Arial;
       color:#fff;
-      overflow:hidden;
-      background: var(--bg) url("./bg.jpg") center/cover no-repeat fixed;
     }
 
-    /* cinematic overlay */
+    /* ===== 清晰背景層（可動畫） ===== */
+    .bg{
+      position:fixed;
+      inset:0;
+      background:url("./bg.jpg") center/cover no-repeat;
+      transform:scale(1.08);
+      will-change:transform;
+      z-index:-3;
+      animation: driftZoom 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes driftZoom{
+      from{ transform:scale(1.08) translate3d(0,0,0); }
+      to  { transform:scale(1.14) translate3d(0,-1.6%,0); }
+    }
+
+    /* ===== 輕量電影感遮罩（已減霧，畫面更清） ===== */
     .overlay{
-      position:fixed; inset:0; z-index:0; pointer-events:none;
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:-2;
       background:
-        radial-gradient(70% 55% at 50% 28%, rgba(120,180,255,.22), rgba(0,0,0,.82)),
-        radial-gradient(80% 90% at 50% 85%, rgba(180,110,255,.14), rgba(0,0,0,.90)),
-        linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.92));
+        radial-gradient(70% 55% at 50% 28%, rgba(120,180,255,.10), rgba(0,0,0,.55)),
+        radial-gradient(80% 90% at 50% 85%, rgba(180,110,255,.06), rgba(0,0,0,.70)),
+        linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.55));
     }
 
-    /* subtle grain */
-    .grain{
-      position:fixed; inset:-20%; z-index:0; pointer-events:none;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
-      mix-blend-mode: overlay;
-      opacity:.10;
-      animation: drift 12s linear infinite;
+    /* ===== 細微星塵（似 GIF 呼吸感） ===== */
+    .stars{
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      pointer-events:none;
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.35), transparent),
+        radial-gradient(1px 1px at 70% 40%, rgba(255,255,255,.25), transparent),
+        radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,.2), transparent);
+      animation: starsMove 18s linear infinite;
+      opacity:.55;
     }
-    @keyframes drift{ to{ transform:translate3d(-7%, 6%, 0);} }
 
-    /* layout: title on top, button at bottom */
+    @keyframes starsMove{
+      from{ transform:translateY(0); }
+      to{ transform:translateY(-80px); }
+    }
+
+    /* ===== 版面：標題上，入口下 ===== */
     .stage{
       position:relative;
       z-index:1;
       height:100%;
-      width:100%;
       display:flex;
       flex-direction:column;
       justify-content:space-between;
-      padding: clamp(18px, 3.2vw, 36px);
+      padding:clamp(18px, 3vw, 36px);
     }
 
-    /* top title block */
+    /* ---- 上方標題 ---- */
     .top{
       width:min(980px, 94vw);
       margin:0 auto;
-      padding: 18px 18px 0;
       text-align:center;
+      padding-top:10px;
     }
 
     .title{
-      font-size: clamp(30px, 4.8vw, 60px);
-      font-weight: 900;
-      line-height:1.12;
+      font-size:clamp(30px, 4.8vw, 60px);
+      font-weight:900;
       letter-spacing:.04em;
-      margin: 6px 0 10px;
-      background: linear-gradient(90deg, rgba(255,255,255,.95), rgba(180,170,255,.95), rgba(120,220,255,.95));
+      line-height:1.12;
+      margin:6px 0 10px;
+      background:linear-gradient(90deg, #fff, #c9c3ff, #78dcff);
       -webkit-background-clip:text;
       background-clip:text;
       color:transparent;
       text-shadow:
-        0 0 22px rgba(180,110,255,.30),
-        0 16px 70px rgba(0,0,0,.70);
+        0 0 24px rgba(180,140,255,.25),
+        0 16px 80px rgba(0,0,0,.7);
     }
 
     .subtitle{
-      font-size: clamp(14px, 2.1vw, 18px);
+      font-size:clamp(14px, 2.2vw, 18px);
       letter-spacing:.16em;
-      opacity:.88;
+      opacity:.9;
       margin:0;
-      text-shadow: 0 14px 60px rgba(0,0,0,.75);
     }
 
-    /* center stays empty: preserve character visibility */
+    /* ---- 中間留空，釋放主角 ---- */
     .spacer{
       flex:1;
-      min-height: 120px;
+      min-height:120px;
     }
 
-    /* bottom CTA */
+    /* ---- 底部入口 ---- */
     .bottom{
       width:min(980px, 94vw);
       margin:0 auto;
       display:flex;
       justify-content:center;
-      padding: 0 18px 22px;
+      padding-bottom:18px;
     }
 
     .cta-wrap{
-      position:relative;
-      padding: 14px 16px;
-      border-radius: 24px;
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      border: 1px solid var(--line);
-      box-shadow: 0 30px 120px var(--shadow);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      padding:14px 16px;
+      border-radius:26px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      backdrop-filter:blur(10px);
+      box-shadow:0 30px 120px var(--shadow);
+      text-align:center;
     }
 
     .btn{
       appearance:none;
-      border: 1px solid rgba(160,220,255,.55);
-      background: linear-gradient(135deg, rgba(120,220,255,.35), rgba(180,110,255,.25));
+      border:1px solid rgba(160,220,255,.55);
+      background:linear-gradient(135deg, rgba(120,220,255,.35), rgba(180,110,255,.28));
       color:#fff;
-      padding: 16px 46px;
-      border-radius: 999px;
+      padding:16px 46px;
+      border-radius:999px;
       cursor:pointer;
       font-family:"Orbitron","Noto Sans TC",system-ui;
-      font-weight: 800;
-      font-size: clamp(16px, 2.4vw, 22px);
-      letter-spacing: .22em;
-      position:relative;
-      overflow:hidden;
+      font-weight:800;
+      font-size:clamp(16px, 2.4vw, 22px);
+      letter-spacing:.22em;
       box-shadow:
         0 0 0 1px rgba(0,255,255,.12) inset,
         0 18px 60px rgba(120,180,255,.35),
         0 30px 120px rgba(180,110,255,.25);
-      transition: transform .14s ease, filter .22s ease, box-shadow .22s ease, border-color .22s ease;
+      transition:.18s ease;
     }
-
-    .btn::before{
-      content:"";
-      position:absolute; inset:-3px;
-      border-radius:999px;
-      background: conic-gradient(from 180deg,
-        rgba(0,255,255,0),
-        rgba(120,220,255,.78),
-        rgba(180,110,255,.88),
-        rgba(0,255,255,0)
-      );
-      filter: blur(14px);
-      z-index:-1;
-      animation: spin 3.6s linear infinite;
-      opacity:.95;
-    }
-    @keyframes spin{ to{ transform:rotate(360deg);} }
 
     .btn:hover{
-      transform: translateY(-2px);
-      border-color: rgba(120,220,255,.75);
-      filter: saturate(1.12);
+      transform:translateY(-2px);
       box-shadow:
         0 0 0 1px rgba(0,255,255,.18) inset,
-        0 26px 90px rgba(120,200,255,.50),
+        0 26px 90px rgba(120,200,255,.5),
         0 40px 160px rgba(200,140,255,.38);
     }
-    .btn:active{ transform: translateY(0) scale(.99); }
 
     .hint{
       margin-top:10px;
-      text-align:center;
-      font-size: 12px;
+      font-size:12px;
       letter-spacing:.14em;
-      opacity:.68;
+      opacity:.7;
     }
 
-    /* ripple */
-    .ripple{
-      position:absolute;
-      border-radius:999px;
-      transform:translate(-50%,-50%);
-      background: radial-gradient(circle, rgba(120,220,255,.55), rgba(180,110,255,.22), rgba(255,255,255,0));
-      pointer-events:none;
-      animation: ripple 820ms ease-out forwards;
-      mix-blend-mode: screen;
-    }
-    @keyframes ripple{
-      from{ width:0; height:0; opacity:.95; }
-      to{ width:560px; height:560px; opacity:0; }
-    }
-
-    /* mobile tweaks */
+    /* 手機 */
     @media (max-width:520px){
-      .cta-wrap{ width:100%; }
-      .btn{ width:100%; padding: 16px 18px; }
-      .subtitle{ letter-spacing:.12em; }
-      .spacer{ min-height: 90px; }
+      .btn{ width:100%; padding:16px 18px; }
+      .spacer{ min-height:90px; }
     }
   </style>
 </head>
 
 <body>
+  <!-- 動態背景層 -->
+  <div class="bg" id="bg"></div>
   <div class="overlay"></div>
-  <div class="grain"></div>
+  <div class="stars"></div>
 
   <div class="stage">
-    <!-- TOP: Title -->
+    <!-- 上：標題 -->
     <header class="top">
       <div class="title">你嘅旅程，由呢一刻開始</div>
       <p class="subtitle">一步踏入 ALPHA X 宇宙。</p>
     </header>
 
-    <!-- CENTER: empty space (keeps character visible) -->
-    <div class="spacer" aria-hidden="true"></div>
+    <!-- 中：留空 -->
+    <div class="spacer"></div>
 
-    <!-- BOTTOM: CTA -->
+    <!-- 下：入口 -->
     <footer class="bottom">
       <div class="cta-wrap">
-        <button id="enterBtn" class="btn" type="button">進入&nbsp;ALPHA&nbsp;X</button>
+        <button id="enterBtn" class="btn">進入&nbsp;ALPHA&nbsp;X</button>
         <div class="hint">點擊進入</div>
       </div>
     </footer>
   </div>
 
   <script>
-    // Ripple effect
-    const btn = document.getElementById("enterBtn");
-    btn.addEventListener("pointerdown", (e) => {
-      const r = document.createElement("span");
-      r.className = "ripple";
-      const rect = btn.getBoundingClientRect();
-      r.style.left = (e.clientX - rect.left) + "px";
-      r.style.top  = (e.clientY - rect.top) + "px";
-      btn.appendChild(r);
-      r.addEventListener("animationend", () => r.remove(), { once: true });
+    /* ===== 視差：令畫面似角色向前 ===== */
+    const bg = document.getElementById('bg');
+    let tx=0, ty=0, cx=0, cy=0;
+
+    function setTarget(x,y){
+      tx = (x - 0.5) * 12;
+      ty = (y - 0.5) * 10;
+    }
+
+    window.addEventListener('mousemove', e=>{
+      setTarget(e.clientX / innerWidth, e.clientY / innerHeight);
     });
 
-    // Redirect
-    btn.addEventListener("click", () => {
-      window.location.href = "https://alphaxhk.win";
+    window.addEventListener('deviceorientation', e=>{
+      if(e.gamma==null) return;
+      setTarget((e.gamma+45)/90, (e.beta+45)/90);
+    }, { passive:true });
+
+    (function raf(){
+      cx += (tx - cx) * 0.06;
+      cy += (ty - cy) * 0.06;
+      bg.style.transform = `scale(1.12) translate3d(${cx}px, ${cy}px, 0)`;
+      requestAnimationFrame(raf);
+    })();
+
+    /* ===== 點擊入口：簡單音效 + 跳轉 ===== */
+    const btn = document.getElementById("enterBtn");
+    btn.addEventListener("click", ()=>{
+      try{
+        const ctx = new (window.AudioContext||window.webkitAudioContext)();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type="sine";
+        o.frequency.setValueAtTime(180, ctx.currentTime);
+        o.frequency.exponentialRampToValueAtTime(40, ctx.currentTime+0.25);
+        g.gain.setValueAtTime(0.12, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.35);
+        o.connect(g).connect(ctx.destination);
+        o.start();
+        o.stop(ctx.currentTime+0.4);
+      }catch(e){}
+      setTimeout(()=>location.href="https://alphaxhk.win", 380);
     });
   </script>
 </body>
